@@ -23,7 +23,11 @@ class SpladeFactory():
         agg='max',
         max_length = 256,
         device=None):
-
+        
+#       New parameter to choose saturation function        
+#       saturation_func='log',  
+#       regularization_strength=0.1           
+        
         import torch
         self.max_length = max_length
         self.model = model
@@ -128,4 +132,17 @@ def toks2doc(mult=100):
         return df
     
     return pt.apply.generic(_rowtransform)
-    
+
+# Method to adjust saturation function
+'''    
+def adjust_saturation(weights, saturation_func):
+    if saturation_func == 'log':
+        adjusted_weights = torch.log(1 + torch.relu(weights))
+    elif saturation_func == 'sigmoid':
+        adjusted_weights = torch.sigmoid(weights)  # Placeholder for actual sigmoid adjustment
+    elif saturation_func == 'squared_inverse':
+        adjusted_weights = 1 / torch.square(weights + 1)  # Placeholder for squared inverse logic
+    else:
+        raise ValueError(f"Unsupported saturation function: {saturation_func}")
+    return adjusted_weights
+'''
