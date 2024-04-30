@@ -3,6 +3,7 @@ assert pt.started()
 from typing import Union
 import torch
 import pandas as pd
+from .transformer_rep import Splade
 
 def _matchop(t, w):
     import base64
@@ -22,31 +23,31 @@ class SpladeFactory():
         tokenizer=None,
         agg='max',
         max_length = 256,
-        device=None):
-        
-#       New parameter to choose saturation function        
-#       saturation_func='log',  
-#       regularization_strength=0.1           
+        device=None,
+        saturation_function='sigmoid'):
         
         import torch
         self.max_length = max_length
         self.model = model
         self.tokenizer = tokenizer
+        self.saturation_function = saturation_function
+
         if device is None:
             self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         else:
             self.device = torch.device(device)
+        
         if isinstance(model, str):
-            from splade.models.transformer_rep import Splade
             if self.tokenizer is None:
                 from transformers import AutoTokenizer
                 self.tokenizer = AutoTokenizer.from_pretrained(model)
-            self.model = Splade(model, agg=agg)
+            self.model = Splade(model, agg=agg, saturation_function=self.saturation_function)
             self.model.eval()
             self.model = self.model.to(self.device)
-        else:
+        elif isinstance(model, torch.nn.Module):
+            self.model = model.to(self.device)
             if self.tokenizer is None:
-                raise ValueError("you must specify tokenizer if passing a model")
+                raise ValueError("You must specify tokenizer if passing a model")
 
         self.reverse_voc = {v: k for k, v in self.tokenizer.vocab.items()}
 
@@ -133,16 +134,3 @@ def toks2doc(mult=100):
     
     return pt.apply.generic(_rowtransform)
 
-# Method to adjust saturation function
-'''    
-def adjust_saturation(weights, saturation_func):
-    if saturation_func == 'log':
-        adjusted_weights = torch.log(1 + torch.relu(weights))
-    elif saturation_func == 'sigmoid':
-        adjusted_weights = torch.sigmoid(weights)  # Placeholder for actual sigmoid adjustment
-    elif saturation_func == 'squared_inverse':
-        adjusted_weights = 1 / torch.square(weights + 1)  # Placeholder for squared inverse logic
-    else:
-        raise ValueError(f"Unsupported saturation function: {saturation_func}")
-    return adjusted_weights
-'''
