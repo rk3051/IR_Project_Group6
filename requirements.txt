@@ -45,7 +45,7 @@ omegaconf==2.1.2
 packaging==24.0
 pandas==2.0.3
 patsy==0.5.6
-pkg_resources==0.0.0
+# pkg_resources==0.0.0
 pyautocorpus==0.1.12
 pyjnius==1.6.1
 pyt_splade @ git+https://github.com/cmacdonald/pyt_splade.git@1efb0561496de8d199a5dfeeaccc9eddbd08a6da

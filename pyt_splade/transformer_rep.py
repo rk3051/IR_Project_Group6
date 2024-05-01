@@ -149,10 +149,10 @@ class Splade(SiameseBase):
             return torch.log(1 + torch.relu(logits)) * attention_mask.unsqueeze(-1)
         elif self.saturation_function == 'sigmoid':
             # Sigmoid with fixed bounds (example bounds; adjust as necessary)
-            return torch.sigmoid(logits) * attention_mask.unsqueeze(-1)
+            return torch.sigmoid(torch.relu(logits)) * attention_mask.unsqueeze(-1) - 0.5
         elif self.saturation_function == 'squared_inverse':
             # Squared inverse saturation
-            return (1 / (1 + torch.square(logits))) * attention_mask.unsqueeze(-1)
+            return 1 - (1 / (1 + torch.square(1 + torch.relu(logits)))) * attention_mask.unsqueeze(-1)
         else:
             raise ValueError("Unsupported saturation function")
 
