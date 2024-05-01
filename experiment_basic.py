@@ -45,7 +45,7 @@ experiment = pt.Experiment(
     qrels,
     batch_size=200,
     filter_by_qrels=True,
-    eval_metrics=[RR(rel=2), nDCG@10, nDCG@100, AP(rel=2)],
+    eval_metrics=[MRR(rel=1), nDCG@10, nDCG@100, MAP(rel=1)],
     names=['splade', 'bm25', 'tfidf']
 )
 
