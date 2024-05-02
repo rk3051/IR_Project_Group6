@@ -14,7 +14,7 @@ import os
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 
-factory = pyt_splade.SpladeFactory(device='cuda')
+factory = pyt_splade.SpladeFactory(device='cpu', saturation_function='squared_inverse')
 doc_encoder = factory.indexing()
 pt_index_path = './vaswani'
 
@@ -45,8 +45,8 @@ experiment = pt.Experiment(
     qrels,
     batch_size=200,
     filter_by_qrels=True,
-    eval_metrics=[RR(rel=2), nDCG@10, nDCG@100, AP(rel=2)],
-    names=['splade', 'bm25', 'tfidf']
+    eval_metrics=[RR(rel=1), nDCG@10, nDCG@100, AP(rel=1)],
+    names=['splade_squared_inverse', 'bm25', 'tfidf']
 )
 
 print(experiment)
