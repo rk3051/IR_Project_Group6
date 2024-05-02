@@ -13,8 +13,8 @@ import pyt_splade
 import os
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
-
-factory = pyt_splade.SpladeFactory(device='cuda')
+# in factory, change field `saturation_function`
+factory = pyt_splade.SpladeFactory(device='cuda', saturation_function='log2')
 doc_encoder = factory.indexing()
 pt_index_path = './vaswani'
 
