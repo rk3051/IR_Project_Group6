@@ -31,7 +31,7 @@ You can choose any of the following flags in place of --sigmoid to choose which 
 
 2. Modified `pyt_splade/__init__.py` (the file which initializes PyTerrier Splade) to accept our modified SPLADE model, as well as the `saturation_function` argument we introduced, which enables configuration of the saturation function used. 
 
-```
+```python
 from .transformer_rep import Splade
 
 class SpladeFactory():
@@ -48,7 +48,7 @@ class SpladeFactory():
 
 Here our modifications allow us to instantiate our custom SPLADE model.
 
-```
+```python
         if isinstance(model, str):
             if self.tokenizer is None:
                 from transformers import AutoTokenizer
@@ -60,7 +60,7 @@ Here our modifications allow us to instantiate our custom SPLADE model.
 
 3. Modified `transformer_rep` from the SPLADE repository (as well as migrating its dependencies to our project) to create our modified SPLADE model. These modifications included, being able to configure the saturation function, as well as creating the saturation functions. 
 
-```
+```python
 class Splade(SiameseBase):
     """SPLADE model
     """
@@ -100,3 +100,32 @@ class Splade(SiameseBase):
 ```
 
 4. Created `experiment.py` which performs indexing and retrieval experiments using PyTerrier along with our custom SPLADE models, leveraging the Vaswani Dataset. 
+
+
+## Further Term weight Analysis
+
+The folder `Term_weight_Analysis` provides code that visualizes term weights after applying different saturation functions. The code of `SPLADE_term_analysis.py` was mainly used to better understand the effects of saturation and stages of the SPLADE model. 
+
+### How to use:
+In `line 79` change the document that should be analyzed.
+
+```python
+# doc3 from vaswani
+    text = (
+            "the british computer society  report of a conference held in cambridge june"
+    )
+```
+
+In `line 106`, adjust the set of saturation funcions that should be applied and compared.
+
+```python
+# availabe functions: ["log", "sq_inverse", "sigmoid", "none", "sqrt", "tanh", "log2"]
+saturation_functs = ["log", "none", "sqrt", "log2", "sigmoid", "tanh"]
+```
+
+In `line 141` select the base line saturation function, the terms should be sorted by (descending)
+
+```python
+# Sort the DataFrame based on 'log' weights from highest to lowest
+df_sorted = df.sort_values(by='log', ascending=False)
+```
